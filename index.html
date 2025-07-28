@@ -59,7 +59,7 @@
         <!-- Заголовок -->
         <header class="text-center mb-10">
             <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
-                <i class="fas fa-calculator text-indigo-600 mr-3"></i>Профессиональный калькулятор себестоимости
+                <i class="fas fa-calculator text-indigo-600 mr-3"></i>Калькулятор себестоимости
             </h1>
             <p class="text-gray-600 max-w-2xl mx-auto">Расчет себестоимости с учетом количества, маржи, налогов и разных типов стоимости</p>
         </header>
@@ -85,71 +85,6 @@
                             <div class="font-medium" :class="profitValue >= 0 ? 'text-green-600' : 'text-red-600'">
                                 {{ formatCurrency(profitValue) }}
                             </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Маржа и налог -->
-                <div class="summary-card bg-white rounded-xl p-6">
-                    <h2 class="text-lg font-semibold text-gray-600 mb-4">Наценка и налог</h2>
-                    
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Маржа (%)</label>
-                            <div class="flex items-center">
-                                <input v-model.number="marginPercent" type="range" min="0" max="100" step="1" class="w-full">
-                                <span class="ml-3 w-14 text-center font-medium">{{ marginPercent }}%</span>
-                            </div>
-                            <div class="text-sm text-gray-500 mt-1">
-                                {{ formatCurrency(marginValue) }}
-                            </div>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Налог (%)</label>
-                            <div class="flex items-center">
-                                <input v-model.number="taxPercent" type="range" min="0" max="30" step="1" class="w-full">
-                                <span class="ml-3 w-14 text-center font-medium">{{ taxPercent }}%</span>
-                            </div>
-                            <div class="text-sm text-gray-500 mt-1">
-                                {{ formatCurrency(taxValue) }}
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-4 pt-4 border-t border-gray-200">
-                        <div class="flex justify-between">
-                            <span class="font-medium">Рентабельность:</span>
-                            <span :class="profitMargin >= 0 ? 'text-green-600' : 'text-red-600'" class="font-bold">
-                                {{ profitMargin >= 0 ? '+' : '' }}{{ profitMargin }}%
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Статистика -->
-                <div class="summary-card bg-white rounded-xl p-6">
-                    <h2 class="text-lg font-semibold text-gray-600 mb-4">Статистика</h2>
-                    <div class="space-y-3">
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-600">Всего позиций:</span>
-                            <span class="font-medium">{{ rows.length }}</span>
-                        </div>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-600">Заполнено правильно:</span>
-                            <span class="font-medium text-green-600">{{ validRowsCount }}</span>
-                        </div>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-600">С ошибками:</span>
-                            <span class="font-medium text-red-600">{{ invalidRowsCount }}</span>
-                        </div>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-600">Абсолютные значения:</span>
-                            <span class="font-medium">{{ absoluteRowsCount }}</span>
-                        </div>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-600">Процентные значения:</span>
-                            <span class="font-medium">{{ percentRowsCount }}</span>
                         </div>
                     </div>
                 </div>
@@ -253,6 +188,71 @@
                         </button>
                     </div>
                 </div>
+
+                <!-- Маржа и налог -->
+                <div class="summary-card bg-white rounded-xl p-6">
+                    <h2 class="text-lg font-semibold text-gray-600 mb-4">Наценка и налог</h2>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Маржа (%)</label>
+                            <div class="flex items-center">
+                                <input v-model.number="marginPercent" type="range" min="0" max="100" step="1" class="w-full">
+                                <span class="ml-3 w-14 text-center font-medium">{{ marginPercent }}%</span>
+                            </div>
+                            <div class="text-sm text-gray-500 mt-1">
+                                {{ formatCurrency(marginValue) }}
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Налог (%)</label>
+                            <div class="flex items-center">
+                                <input v-model.number="taxPercent" type="range" min="0" max="30" step="1" class="w-full">
+                                <span class="ml-3 w-14 text-center font-medium">{{ taxPercent }}%</span>
+                            </div>
+                            <div class="text-sm text-gray-500 mt-1">
+                                {{ formatCurrency(taxValue) }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 pt-4 border-t border-gray-200">
+                        <div class="flex justify-between">
+                            <span class="font-medium">Рентабельность:</span>
+                            <span :class="profitMargin >= 0 ? 'text-green-600' : 'text-red-600'" class="font-bold">
+                                {{ profitMargin >= 0 ? '+' : '' }}{{ profitMargin }}%
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Статистика -->
+                <div class="summary-card bg-white rounded-xl p-6">
+                    <h2 class="text-lg font-semibold text-gray-600 mb-4">Статистика</h2>
+                    <div class="space-y-3">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Всего позиций:</span>
+                            <span class="font-medium">{{ rows.length }}</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Заполнено правильно:</span>
+                            <span class="font-medium text-green-600">{{ validRowsCount }}</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">С ошибками:</span>
+                            <span class="font-medium text-red-600">{{ invalidRowsCount }}</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Абсолютные значения:</span>
+                            <span class="font-medium">{{ absoluteRowsCount }}</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Процентные значения:</span>
+                            <span class="font-medium">{{ percentRowsCount }}</span>
+                        </div>
+                    </div>
+                </div>
                 
                 <!-- Детализация расчета -->
                 <div class="mt-6 bg-white rounded-xl shadow-lg p-6">
@@ -286,14 +286,6 @@
                         </div>
                     </div>
                     
-                    <div class="mt-6">
-                        <button
-                            @click="exportPDF"
-                            class="w-full py-2 px-4 bg-red-600 hover:bg-red-700 text-white rounded-md flex items-center justify-center"
-                        >
-                            <i class="fas fa-file-pdf mr-2"></i> Сохранить как PDF
-                        </button>
-                    </div>
                 </div>
             </div>
         </div>

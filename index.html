@@ -15,53 +15,96 @@
     <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
     
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+        }
+        
+        .card {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .cost-input-container {
+            transition: all 0.3s ease;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .cost-input-container:focus-within {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        
+        .type-toggle {
+            transition: all 0.2s ease;
+            background-color: #eef2ff;
+        }
+        
+        .type-toggle:hover {
+            background-color: #e0e7ff;
+        }
+        
+        .summary-value {
+            font-size: 2.25rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #4f46e5, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            padding: 10px 0;
+        }
+        
         .fade-enter-active {
             transition: all 0.3s ease-out;
         }
+        
         .fade-leave-active {
             transition: all 0.2s ease-in;
         }
+        
         .fade-enter-from,
         .fade-leave-to {
             opacity: 0;
             transform: translateY(10px);
         }
+        
         .invalid {
-            border-color: #ef4444;
+            border-color: #ef4444 !important;
             background-color: #fef2f2;
         }
-        .summary-card {
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        
+        .progress-bar {
+            height: 8px;
+            border-radius: 4px;
+            background-color: #e5e7eb;
+            overflow: hidden;
         }
-        .summary-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-        .type-toggle {
-            transition: all 0.2s ease;
-        }
-        .type-toggle:hover {
-            background-color: #e0e7ff;
-            transform: scale(1.05);
-        }
-        .cost-input-container {
-            transition: border-color 0.3s ease;
-        }
-        .cost-input-container:focus-within {
-            border-color: #6366f1;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: linear-gradient(90deg, #4f46e5, #7c3aed);
+            transition: width 0.5s ease;
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+<body class="min-h-screen">
     <div id="app" class="container mx-auto px-4 py-8 max-w-5xl">
         <!-- Заголовок -->
         <header class="text-center mb-10">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-3">
                 <i class="fas fa-calculator text-indigo-600 mr-3"></i>Калькулятор себестоимости
             </h1>
-            <p class="text-gray-600 max-w-2xl mx-auto">Расчет себестоимости с учетом количества, маржи, налогов и разных типов стоимости</p>
+            <p class="text-gray-600 max-w-2xl mx-auto">Расчет себестоимости с маржей, налогом и разными типами стоимости</p>
         </header>
         
         <!-- Основной контент -->
@@ -69,9 +112,9 @@
             <!-- Левая колонка - Итоги -->
             <div class="lg:col-span-1 space-y-6">
                 <!-- Итоговая стоимость -->
-                <div class="summary-card bg-white rounded-xl p-6">
-                    <h2 class="text-lg font-semibold text-gray-600 mb-2">Общая себестоимость</h2>
-                    <div class="text-4xl md:text-5xl font-bold text-indigo-600 text-center py-4">
+                <div class="card bg-white p-6">
+                    <h2 class="text-lg font-semibold text-gray-600 mb-2 text-center">Общая себестоимость</h2>
+                    <div class="summary-value">
                         {{ formatCurrency(totalCost) }}
                     </div>
                     
@@ -92,29 +135,28 @@
             
             <!-- Правая колонка - Таблица -->
             <div class="lg:col-span-2">
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                <div class="card bg-white overflow-hidden">
                     <div class="overflow-x-auto">
                         <table class="min-w-full">
-                            <thead class="bg-gray-50">
+                            <thead class="bg-indigo-50">
                                 <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Название</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Кол-во</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Стоимость</th>
-                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Действия</th>
+                                    <th class="px-6 py-4 text-left text-xs font-medium text-indigo-700 uppercase tracking-wider">Название</th>
+                                    <th class="px-6 py-4 text-left text-xs font-medium text-indigo-700 uppercase tracking-wider">Стоимость</th>
+                                    <th class="px-6 py-4 text-right text-xs font-medium text-indigo-700 uppercase tracking-wider">Действия</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr 
                                     v-for="(row, index) in rows" 
                                     :key="row.id"
-                                    class="border-b border-gray-200 transition-colors hover:bg-gray-50"
+                                    class="border-b border-gray-100 transition-colors hover:bg-indigo-50/50"
                                 >
                                     <td class="px-6 py-4">
                                         <input
                                             v-model="row.name"
                                             type="text"
-                                            placeholder="Название позиции"
-                                            class="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500"
+                                            placeholder="Введите название"
+                                            class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500"
                                             :class="{'invalid': !isNameValid(row)}"
                                         >
                                         <p v-if="!isNameValid(row)" class="text-red-500 text-xs mt-1">
@@ -122,31 +164,21 @@
                                         </p>
                                     </td>
                                     <td class="px-6 py-4">
-                                        <input
-                                            v-model.number="row.quantity"
-                                            type="number"
-                                            min="1"
-                                            step="1"
-                                            class="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500"
-                                            :disabled="row.costType === 'absolute'"
-                                        >
-                                    </td>
-                                    <td class="px-6 py-4">
                                         <div class="flex">
-                                            <div class="cost-input-container flex-1 flex items-center border rounded overflow-hidden focus-within:ring-2 focus-within:ring-indigo-200 focus-within:border-indigo-500">
+                                            <div class="cost-input-container flex-1 flex items-center rounded-lg overflow-hidden">
                                                 <input
                                                     v-model.number="row.cost"
                                                     type="number"
                                                     min="0"
                                                     step="0.01"
                                                     :placeholder="row.costType === 'absolute' ? '0.00' : '0'"
-                                                    class="flex-1 pl-3 pr-2 py-2 border-none focus:ring-0"
+                                                    class="flex-1 pl-4 pr-2 py-2 border-none focus:ring-0"
                                                     :class="{'invalid': !isCostValid(row)}"
                                                     @input="validateCost(row)"
                                                 >
                                                 <button
                                                     @click="toggleCostType(row)"
-                                                    class="type-toggle h-full px-3 py-2 bg-gray-100 text-gray-600 hover:bg-gray-200"
+                                                    class="type-toggle h-full px-4 py-2 text-gray-700 hover:bg-indigo-100"
                                                     :title="row.costType === 'absolute' ? 'Рубли' : 'Проценты'"
                                                 >
                                                     <i :class="row.costType === 'absolute' ? 'fas fa-ruble-sign' : 'fas fa-percent'"></i>
@@ -173,44 +205,46 @@
 
                     <!-- Сообщение при пустой таблице -->
                     <div v-if="rows.length === 0" class="text-center py-12 text-gray-500">
-                        <i class="fas fa-clipboard-list text-4xl mb-4"></i>
+                        <i class="fas fa-clipboard-list text-4xl mb-4 text-indigo-200"></i>
                         <p>Добавьте элементы себестоимости</p>
                     </div>
 
                     <!-- Кнопка добавления строки -->
-                    <div class="p-4 bg-gray-50">
+                    <div class="p-4 bg-indigo-50">
                         <button
                             @click="addRow"
-                            class="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md transition-colors flex items-center justify-center"
+                            class="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors flex items-center justify-center"
                         >
                             <i class="fas fa-plus-circle mr-2"></i>
                             Добавить строку
                         </button>
                     </div>
                 </div>
+            </div>
 
-                <!-- Маржа и налог -->
-                <div class="summary-card bg-white rounded-xl p-6">
+            <div class="lg:col-span-2">
+                    <!-- Маржа и налог -->
+                <div class="card bg-white p-6">
                     <h2 class="text-lg font-semibold text-gray-600 mb-4">Наценка и налог</h2>
                     
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Маржа (%)</label>
-                            <div class="flex items-center">
-                                <input v-model.number="marginPercent" type="range" min="0" max="100" step="1" class="w-full">
-                                <span class="ml-3 w-14 text-center font-medium">{{ marginPercent }}%</span>
+                            <div class="flex justify-between mb-1">
+                                <label class="block text-sm font-medium text-gray-700">Маржа</label>
+                                <span class="text-sm font-medium">{{ marginPercent }}%</span>
                             </div>
+                            <input v-model.number="marginPercent" type="range" min="0" max="100" step="1" class="w-full">
                             <div class="text-sm text-gray-500 mt-1">
                                 {{ formatCurrency(marginValue) }}
                             </div>
                         </div>
                         
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Налог (%)</label>
-                            <div class="flex items-center">
-                                <input v-model.number="taxPercent" type="range" min="0" max="30" step="1" class="w-full">
-                                <span class="ml-3 w-14 text-center font-medium">{{ taxPercent }}%</span>
+                            <div class="flex justify-between mb-1">
+                                <label class="block text-sm font-medium text-gray-700">Налог</label>
+                                <span class="text-sm font-medium">{{ taxPercent }}%</span>
                             </div>
+                            <input v-model.number="taxPercent" type="range" min="0" max="30" step="1" class="w-full">
                             <div class="text-sm text-gray-500 mt-1">
                                 {{ formatCurrency(taxValue) }}
                             </div>
@@ -226,10 +260,88 @@
                         </div>
                     </div>
                 </div>
-                
+            </div>
+            <div class="lg:col-span-2">
+                <!-- Детализация расчета -->
+                <div class="card bg-white p-6 mt-6">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-calculator text-indigo-600 mr-2"></i> Детализация расчета
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <h3 class="font-medium text-gray-700 mb-2">Позиции себестоимости</h3>
+                            <div class="space-y-2">
+                                <div v-for="(row, index) in rows" :key="row.id" class="flex justify-between text-sm bg-gray-50 p-3 rounded-lg">
+                                    <div class="flex items-center">
+                                        <span class="font-medium mr-2">{{ row.name || 'Без названия' }}</span>
+                                        <span class="text-xs px-2 py-1 rounded bg-indigo-100 text-indigo-800">
+                                            {{ row.costType === 'absolute' ? 'руб' : '%' }}
+                                        </span>
+                                    </div>
+                                    <span class="font-medium">
+                                        {{ row.costType === 'absolute' ? formatCurrency(row.cost) : row.cost + '%' }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-indigo-50 p-4 rounded-lg">
+                                <h3 class="font-medium text-indigo-700 mb-2">Себестоимость</h3>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-600">Абсолютные значения:</span>
+                                        <span class="font-medium">{{ formatCurrency(absoluteCost) }}</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-600">Процентные значения:</span>
+                                        <span class="font-medium">{{ formatCurrency(percentCost) }}</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm font-medium pt-2 border-t border-indigo-100">
+                                        <span>Общая себестоимость:</span>
+                                        <span>{{ formatCurrency(baseCost) }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-purple-50 p-4 rounded-lg">
+                                <h3 class="font-medium text-purple-700 mb-2">Наценка и налог</h3>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-600">Маржа ({{ marginPercent }}%):</span>
+                                        <span class="font-medium">{{ formatCurrency(marginValue) }}</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-600">Налог ({{ taxPercent }}%):</span>
+                                        <span class="font-medium">{{ formatCurrency(taxValue) }}</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm font-bold pt-2 border-t border-purple-100">
+                                        <span>Итоговая стоимость:</span>
+                                        <span class="text-purple-700">{{ formatCurrency(totalCost) }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-2">
                 <!-- Статистика -->
-                <div class="summary-card bg-white rounded-xl p-6">
+                <div class="card bg-white p-6">
                     <h2 class="text-lg font-semibold text-gray-600 mb-4">Статистика</h2>
+                    
+                    <div class="mb-4">
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="text-gray-600">Прогресс заполнения</span>
+                            <span class="font-medium">{{ Math.round((validRowsCount / rows.length) * 100) || 0 }}%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" :style="{ width: (validRowsCount / rows.length) * 100 + '%' }"></div>
+                        </div>
+                    </div>
+                    
                     <div class="space-y-3">
                         <div class="flex justify-between text-sm">
                             <span class="text-gray-600">Всего позиций:</span>
@@ -243,55 +355,14 @@
                             <span class="text-gray-600">С ошибками:</span>
                             <span class="font-medium text-red-600">{{ invalidRowsCount }}</span>
                         </div>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-600">Абсолютные значения:</span>
-                            <span class="font-medium">{{ absoluteRowsCount }}</span>
-                        </div>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-600">Процентные значения:</span>
-                            <span class="font-medium">{{ percentRowsCount }}</span>
-                        </div>
                     </div>
-                </div>
-                
-                <!-- Детализация расчета -->
-                <div class="mt-6 bg-white rounded-xl shadow-lg p-6">
-                    <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
-                        <i class="fas fa-calculator text-indigo-600 mr-2"></i> Детализация расчета
-                    </h2>
-                    <div class="space-y-3">
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-600">Сумма по позициям (рубли):</span>
-                            <span class="font-medium">{{ formatCurrency(absoluteCost) }}</span>
-                        </div>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-600">Сумма по позициям (проценты):</span>
-                            <span class="font-medium">{{ formatCurrency(percentCost) }}</span>
-                        </div>
-                        <div class="flex justify-between text-sm border-t border-gray-200 pt-2">
-                            <span class="text-gray-600">Общая себестоимость:</span>
-                            <span class="font-medium">{{ formatCurrency(baseCost) }}</span>
-                        </div>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-600">Наценка ({{ marginPercent }}%):</span>
-                            <span class="font-medium">{{ formatCurrency(marginValue) }}</span>
-                        </div>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-600">Налог ({{ taxPercent }}%):</span>
-                            <span class="font-medium">{{ formatCurrency(taxValue) }}</span>
-                        </div>
-                        <div class="flex justify-between text-sm font-bold border-t border-gray-200 pt-2">
-                            <span>Итоговая стоимость:</span>
-                            <span class="text-lg text-green-600">{{ formatCurrency(totalCost) }}</span>
-                        </div>
-                    </div>
-                    
                 </div>
             </div>
+                
         </div>
         
         <!-- Футер -->
-        <footer class="mt-12 text-center text-gray-500 text-sm">
+        <footer class="mt-12 text-center text-gray-500 text-sm pb-8">
             <p>Профессиональный калькулятор себестоимости &copy; {{ new Date().getFullYear() }}</p>
         </footer>
     </div>
@@ -303,13 +374,13 @@
             setup() {
                 // Инициализация данных
                 const rows = ref([
-                    { id: 1, name: "Материалы", quantity: 1, costType: "absolute", cost: 150 },
-                    { id: 2, name: "Трудозатраты", quantity: 1, costType: "absolute", cost: 350 },
-                    { id: 3, name: "Наценка поставщика", quantity: 1, costType: "percent", cost: 10 }
+                    { id: 1, name: "Материалы", costType: "absolute", cost: 250 },
+                    { id: 2, name: "Трудозатраты", costType: "absolute", cost: 500 },
+                    { id: 3, name: "Наценка поставщика", costType: "percent", cost: 15 }
                 ]);
                 
                 const marginPercent = ref(20);
-                const taxPercent = ref(20);
+                const taxPercent = ref(10);
 
                 // Добавление новой строки
                 const addRow = () => {
@@ -318,7 +389,6 @@
                     rows.value.push({
                         id: newId,
                         name: "",
-                        quantity: 1,
                         costType: "absolute",
                         cost: 0
                     });
@@ -337,8 +407,8 @@
                 const toggleCostType = (row) => {
                     row.costType = row.costType === "absolute" ? "percent" : "absolute";
                     // Сброс стоимости при переключении типа
-                    if (row.costType === "percent") {
-                        row.quantity = 1;
+                    if (row.cost > 100 && row.costType === "percent") {
+                        row.cost = 100;
                     }
                 };
 
@@ -372,7 +442,7 @@
                     return new Intl.NumberFormat("ru-RU", {
                         style: "currency",
                         currency: "RUB",
-                        minimumFractionDigits: 2
+                        minimumFractionDigits: 0
                     }).format(value);
                 };
 
@@ -380,7 +450,7 @@
                 const absoluteCost = computed(() => {
                     return rows.value.reduce((total, row) => {
                         if (row.costType === "absolute" && isCostValid(row)) {
-                            return total + (parseFloat(row.cost) * parseInt(row.quantity));
+                            return total + parseFloat(row.cost);
                         }
                         return total;
                     }, 0);
@@ -391,7 +461,7 @@
                     const absCost = absoluteCost.value;
                     return rows.value.reduce((total, row) => {
                         if (row.costType === "percent" && isCostValid(row)) {
-                            const percentValue = (absCost * parseFloat(row.cost) / 100 * parseInt(row.quantity));
+                            const percentValue = (absCost * parseFloat(row.cost) / 100);
                             return total + percentValue;
                         }
                         return total;
@@ -440,20 +510,6 @@
                 const invalidRowsCount = computed(() => {
                     return rows.value.length - validRowsCount.value;
                 });
-                
-                const absoluteRowsCount = computed(() => {
-                    return rows.value.filter(row => row.costType === "absolute").length;
-                });
-                
-                const percentRowsCount = computed(() => {
-                    return rows.value.filter(row => row.costType === "percent").length;
-                });
-                
-                // Экспорт в PDF
-                const exportPDF = () => {
-                    alert("PDF экспортирован! В реальном приложении здесь была бы реализована генерация PDF");
-                    // В реальном приложении здесь был бы код для генерации PDF
-                };
 
                 return {
                     rows,
@@ -475,10 +531,7 @@
                     profitValue,
                     profitMargin,
                     validRowsCount,
-                    invalidRowsCount,
-                    absoluteRowsCount,
-                    percentRowsCount,
-                    exportPDF
+                    invalidRowsCount
                 };
             }
         }).mount("#app");
